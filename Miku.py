@@ -13,7 +13,7 @@ from discord.utils import get
 from discord.ext import commands
 
 
-token = "bot_token"
+token = "ODAyNDg3MTUyNDYwOTU1NjQ4.YAv8Zg.L5xzZ6aX5OxEVuRc2HL6JRWWEBo"
 
 client = commands.Bot(command_prefix='!')
 # intents = discord.Intents.default()
