@@ -8,8 +8,8 @@ import datetime
 import time
 from discord.utils import get
 from discord.ext import commands
-from bs4 import BeautifulSoup
-import requests
+# from bs4 import BeautifulSoup
+# import requests
 
 
 token = "ODAyNDg3MTUyNDYwOTU1NjQ4.YAv8Zg.L5xzZ6aX5OxEVuRc2HL6JRWWEBo"
