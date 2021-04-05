@@ -1,16 +1,15 @@
 import discord
 import asyncio
-import random
-# import urllib.parse
-# import urllib
+import urllib.parse
+import urllib
 import youtube_dl
 import openpyxl
 import datetime
 import time
-# from selenium import webdriver
-# from selenium.webdriver.chrome.options import Options
 from discord.utils import get
 from discord.ext import commands
+from bs4 import BeautifulSoup
+import requests
 
 
 token = "ODAyNDg3MTUyNDYwOTU1NjQ4.YAv8Zg.L5xzZ6aX5OxEVuRc2HL6JRWWEBo"
@@ -232,8 +231,8 @@ async def 타이머(ctx):
     for i in range(sec, 0, -1):
         time.sleep(1)
         await ctx.message.channel.send(embed=discord.Embed(description= str(i) + "초"))
-    else:
-        await ctx.message.channel.send(embed=discord.Embed(description='타이머 종료'))
+    
+    await ctx.message.channel.send(embed=discord.Embed(description='타이머 종료'))
 
 @client.command()
 async def 알람추가(ctx):
@@ -248,16 +247,14 @@ async def 알람추가(ctx):
             da2 = li.pop(0)
             da3 = li.pop(0)
             da4 = li.pop(0)
-            da5 = li.pop(0)
-            dd = da1 + da2 + da3 + da4 +da5 
+            dd = da1 + da2 + da3 + da4
             sheet["A" + str(i)].value = str(dd)
             file.save("알람.xlsx")
-            year = dd[:4]
-            month = dd[4:6]
-            day = dd[6:8]
-            hour = dd[8:10]
-            minu = dd[10:]
-            await ctx.message.channel.send(year + "년 " + month + '월 ' + day + "일 " + hour + '시 ' + minu + "분 알람이 추가되었습니다.")
+            month = dd[:2]
+            day = dd[2:4]
+            hour = dd[4:6]
+            minu = dd[6:]
+            await ctx.message.channel.send(month + '월 ' + day + "일 " + hour + '시 ' + minu + "분 알람이 추가되었습니다.")
             break
         i+=1
 
@@ -268,22 +265,20 @@ async def 알람삭제(ctx):
     sheet  = file.active
     i=1
     while True:
-        li = msg.split(" ")
+        li = msg.split("/")
         da1 = li.pop(0)
         da2 = li.pop(0)
         da3 = li.pop(0)
         da4 = li.pop(0)
-        da5 = li.pop(0)
-        dd = da1 + da2 + da3 + da4 +da5 
+        dd = da1 + da2 + da3 + da4 
         if sheet["A" + str(i)].value == str(dd):
             sheet.delete_rows(i)
             file.save("알람.xlsx")
-            year = dd[:4]
-            month = dd[4:6]
-            day = dd[6:8]
-            hour = dd[8:10]
-            minu = dd[10:]
-            await ctx.message.channel.send(year + "년 " + month + '월 ' + day + "일 " + hour + '시 ' + minu + "분 알람이 삭제 되었습니다.")
+            month = dd[:2]
+            day = dd[2:4]
+            hour = dd[4:6]
+            minu = dd[6:]
+            await ctx.message.channel.send(month + '월 ' + day + "일 " + hour + '시 ' + minu + "분 알람이 삭제 되었습니다.")
             break
         i+=1
 
@@ -295,12 +290,11 @@ async def 알람보기(ctx):
     try:
         for i in range(1,100):
             dd = sheet.cell(i,1).value
-            year = dd[:4]
-            month = dd[4:6]
-            day = dd[6:8]
-            hour = dd[8:10]
-            minu = dd[10:]
-            await ctx.message.channel.send(year + "년 " + month + '월 ' + day + "일 " + hour + '시 ' + minu + "분")
+            month = dd[:2]
+            day = dd[2:4]
+            hour = dd[4:6]
+            minu = dd[6:]
+            await ctx.message.channel.send(month + '월 ' + day + "일 " + hour + '시 ' + minu + "분")
             i+=1
     except :
         await ctx.message.channel.send("--------")
@@ -314,8 +308,8 @@ async def 알람초기화(ctx):
     file.save("알람.xlsx")
     await ctx.message.channel.send("알람이 초기화 되었습니다.")
     
-# @client.event
-# async def online():
+# @client.commad()
+# async def 회의알람():
 #     file = openpyxl.load_workbook("알람.xlsx")
 #     sheet  = file.active
 #     i = 1
@@ -378,7 +372,7 @@ async def 신음(ctx):
     await ctx.send("사랑해요.. 주인님..")
 
 @client.command()
-async def 메세지삭제(ctx):
+async def 삭제(ctx):
     number = int(ctx.message.content.split()[1])
     await ctx.message.channel.purge(limit=number + 1)
     await ctx.message.channel.send(f"{number}개 메세지 삭제완료")
@@ -393,10 +387,11 @@ async def 투표(ctx):
 
 # @client.command()
 # async def 공건불러(ctx):
-    # for i in range(1,50):
-        # msg = "<@{}>".format(str(354168092643033090))
-        # time.sleep(1)
-        # await ctx.message.channel.send(msg)
+#     count = ctx.message.content[6:]
+#     for i in range(0,int(count)):
+#         msg = "<@{}>".format(str(354168092643033090))
+#         time.sleep(1)
+#         await ctx.message.channel.send(msg)
 
 # @client.command()
 # async def 주기알람(ctx):
@@ -408,15 +403,14 @@ async def 투표(ctx):
 #         time.sleep(86400*msg)
 #         await ctx.message.channel.send("주기 알람 @everyone")
 
-@client.command()
-async def 주기알람(ctx):
-    msg = ctx.message.content[6:]
-    await ctx.message.channel.send(msg + "시간 마다 알람이 울립니다.")
-    await ctx.message.channel.send("*단 프로그램이 켜져있어야 합니다. (또는 호스팅)*")
-    msg = int(msg)
-    while True:
-        time.sleep(3600*msg)
-        await ctx.message.channel.send("주기 알람")
+# @client.command()
+# async def 주기알람(ctx):
+#     msg = ctx.message.content[6:]
+#     await ctx.message.channel.send(msg + "시간 마다 알람이 울립니다.")
+#     msg = int(msg)
+#     while True:
+#         time.sleep(3600*msg)
+#         await ctx.message.channel.send("주기 알람")
 
 @client.command()
 async def 사진목록1(ctx):
@@ -599,99 +593,6 @@ async def 사진(ctx):
         embed.set_image(url="https://i.imgur.com/cmSfQey.gif")
         await ctx.message.channel.send(embed=embed)
 
-# @client.command()
-# async def 사진검사(ctx):
-#     embed = discord.Embed(imestamp=ctx.message.created_at,color=0x62c1cc)
-#     img1 = "https://lh3.googleusercontent.com/proxy/07Uv8EaUpJSts1SYjA7ZpxnjVqXRlAirIv3umRlSVY4xCjzBdg5Eb6MnPQrMKkYg6435sINGbxXOo9jK5Sx1O2-hawVxqrl-W9J1qOlhVjljZ-kdO76JqkieGuSts2N4q8uPEFcDqPwBHmo4yX6JOs7MbZK2cn2tdpgzn6HDVIom9qUzOQ"
-#     img2 = "https://2.gall-img.com/tdgall/files/attach/images/82/598/504/085/30637989dd98ccb51427279dca628024.jpg"
-#     img3 = "https://upload.inven.co.kr/upload/2014/12/15/bbs/i4188200932.jpg"
-#     img4 = "https://t1.daumcdn.net/cfile/blog/20457E4E4EC73F5215"
-#     img5 = "https://t1.daumcdn.net/cfile/blog/17752B3E50ADEB3B15?original"
-#     img6 = "https://lh3.googleusercontent.com/proxy/gFiZWmN41-R2aBUCLaPKq9wdmevKE_bEqkTTcCmSq_iZvxBWwPUO-cT8yPi6EzjDM6jcGdnMrkRz5zMrEGSGY51eGMJ5pkt6QHuVjRwYt5dHJ8j3_x74I5a8-nmQ9dHI3SvBi3EabE2iXS6UVzWV0EBVeu5NCXvSHWgpYWI1OnPoRUwUjh_DzV02Me11pwATuzItCgtSUsJeeWYNf3mMvdeSWaNFDdDEkprc2eoTm2mHEqr2cRfKOHn0iQbFWHmsvuS79TAn6iCxMqWNTmUnEN95Pg"
-#     img7 = "https://lh3.googleusercontent.com/proxy/nYBwZDE6EnNBtDAP8Adn4z25y6cmdcIjRYr66gulMFlmw0WGKvb1naidSV1n8JVQ_jYKQuymP3SQHkcb94ajSWkftPiK-tXAzysu85hOUvIuBTRd6PRwV6uEExIrsw838h5kiiyeIStFLXcnQvKrqe_c8-jCmsBfriLf2w"
-#     img8 = "https://lh3.googleusercontent.com/proxy/35WG5DG-PHXbINMQWggqWm7HJtEDBRsvLFN2rY13py8sQYJRgYFWwG0F-ePrwKVbeyIcpydbvuySKwtFlBZm5JMWe6--Cm9ofQ0LBX-kVS_zj6D0BS002OxfDscIrt9REx1_L71fC3FLozTTOI7kPCVQz-1aGCKtPCCk3ZS_YXdwnpWE5n0kn6U"
-#     img9 = "https://obj-sg.thewiki.kr/data/4f494146796e42722e6a7067.jpg"
-#     img10 = "https://pbs.twimg.com/media/Dux6NxMUcAA3w8t.png"
-#     img11 = "https://pbs.twimg.com/media/EirkKsBXkAEnKjC.jpg"
-#     img12 = "https://i.pinimg.com/originals/18/a9/50/18a950e2030611b94c89663ab2abfe3e.png"
-#     img13 = "https://img1.daumcdn.net/thumb/R720x0.q80/?scode=mtistory2&fname=http%3A%2F%2Fcfile1.uf.tistory.com%2Fimage%2F22388D4D578768FD1AC52A"
-#     img14 = "https://lh3.googleusercontent.com/proxy/jG_5EmAcqLpYKZn7DWT_NHW_QzeVzKnCpSc8HS8YseV53SNdJHgDJ0NJpyfh_gLYtWIZ94W5V7g5SgjQ4uW-Q36eW879GMGA8_TluCVnJtzzkvLzVCuCB3b4_w"
-#     img15 = "http://thumbnail.egloos.net/460x0/http://pds25.egloos.com/pds/201506/14/56/f0027756_557cc76d34540.jpg"
-#     img16 = "http://thumbnail.egloos.net/600x0/http://pds21.egloos.com/pds/201506/14/56/f0027756_557cc7d263220.png"
-#     img17 = "https://file.namu.moe/file/c2790d5985eae82cd1199a4cba2101c1424b45ac4df63d1f0c6f3c69850dfb22"
-#     img18 = "https://img1.daumcdn.net/thumb/R720x0.q80/?scode=mtistory2&fname=http%3A%2F%2Fcfile29.uf.tistory.com%2Fimage%2F2629723B57879ACB1FA1EB"
-#     img19 = "http://thumbnail.egloos.net/460x0/http://pds25.egloos.com/pds/201506/14/56/f0027756_557ccf7e10e07.png"
-#     img20 = "http://thumbnail.egloos.net/600x0/http://pds21.egloos.com/pds/201506/14/56/f0027756_557cc64902cfd.png"
-#     img21 = "https://img1.daumcdn.net/thumb/R720x0.q80/?scode=mtistory2&fname=http%3A%2F%2Fcfile28.uf.tistory.com%2Fimage%2F266A3E4057879DA80FC421"
-#     img22 = "http://thumbnail.egloos.net/600x0/http://pds21.egloos.com/pds/201506/14/56/f0027756_557ccaf021449.jpg"
-#     img23 = "http://thumbnail.egloos.net/600x0/http://pds25.egloos.com/pds/201506/14/56/f0027756_557cce0cbab0a.jpg"
-#     img24 = "http://thumbnail.egloos.net/600x0/http://pds21.egloos.com/pds/201506/14/56/f0027756_557cce4f990e6.png"
-#     img25 = "http://thumbnail.egloos.net/600x0/http://pds26.egloos.com/pds/201506/14/56/f0027756_557cd1c881a84.png"
-#     img26 = "http://thumbnail.egloos.net/600x0/http://pds27.egloos.com/pds/201506/14/56/f0027756_557cd2415789d.jpg"
-#     img27 = "http://thumbnail.egloos.net/600x0/http://pds26.egloos.com/pds/201506/14/56/f0027756_557cd35567aa4.jpg"
-#     img28 = "http://thumbnail.egloos.net/600x0/http://pds26.egloos.com/pds/201506/14/56/f0027756_557cd3e751602.jpg"
-#     img29 = "http://thumbnail.egloos.net/600x0/http://pds27.egloos.com/pds/201506/14/56/f0027756_557cd4481bdb2.png"
-#     img30 = "http://thumbnail.egloos.net/600x0/http://pds25.egloos.com/pds/201506/14/56/f0027756_557cdf9b6e7cb.jpg"
-#     img31 = "http://thumbnail.egloos.net/600x0/http://pds21.egloos.com/pds/201506/14/56/f0027756_557cd4d68991d.png"
-#     img32 = "http://thumbnail.egloos.net/600x0/http://pds27.egloos.com/pds/201506/14/56/f0027756_557cd58604c51.png"
-#     img33 = "http://thumbnail.egloos.net/600x0/http://pds25.egloos.com/pds/201506/14/56/f0027756_557cd65cae8bb.png"
-#     img34 = "http://thumbnail.egloos.net/600x0/http://pds26.egloos.com/pds/201506/14/56/f0027756_557ce159df55f.jpg"
-#     img35 = "http://thumbnail.egloos.net/600x0/http://pds27.egloos.com/pds/201506/14/56/f0027756_557cd6c961e40.jpg"
-#     img36 = "http://thumbnail.egloos.net/600x0/http://pds25.egloos.com/pds/201506/14/56/f0027756_557cd6f613845.png"
-#     img37 = "http://thumbnail.egloos.net/600x0/http://pds26.egloos.com/pds/201506/14/56/f0027756_557cda10251d8.png"
-#     img38 = "http://pds26.egloos.com/pds/201506/14/56/f0027756_557cd8e6e363a.png"
-#     img39 = "https://appzzang.me/data/file/hot_freeboard/thumb-31222651_HkzS9txX_czyscjl_800x974.jpg"
-#     img40 = "https://c.wallhere.com/photos/1c/8c/anime_anime_girls_bikini_beach_feet_legs_blue_hair_blue_eyes-275636.jpg!d"
-#     li = []
-#     li.append(img1)
-#     li.append(img2)
-#     li.append(img3)
-#     li.append(img4)
-#     li.append(img5)
-#     li.append(img6)
-#     li.append(img7)
-#     li.append(img8)
-#     li.append(img9)
-#     li.append(img10)
-#     li.append(img11)
-#     li.append(img12)
-#     li.append(img13)
-#     li.append(img14)
-#     li.append(img15)
-#     li.append(img16)
-#     li.append(img17)
-#     li.append(img18)
-#     li.append(img19)
-#     li.append(img20)
-#     li.append(img21)
-#     li.append(img22)
-#     li.append(img23)
-#     li.append(img24)
-#     li.append(img25)
-#     li.append(img26)
-#     li.append(img27)
-#     li.append(img28)
-#     li.append(img29)
-#     li.append(img30)
-#     li.append(img31)
-#     li.append(img32)
-#     li.append(img33)
-#     li.append(img34)
-#     li.append(img35)
-#     li.append(img36)
-#     li.append(img37)
-#     li.append(img38)
-#     li.append(img39)
-#     li.append(img40)    
-#     await ctx.message.channel.send("약 40초 정도 소요됩니다.")
-#     time.sleep(3)
-#     for j in range(len(li)):
-#         embed = discord.Embed(imestamp=ctx.message.created_at,color=0x62c1cc)
-#         embed.set_image(url=li[j])
-#         await ctx.message.channel.send(j+1)
-#         await ctx.message.channel.send(embed=embed)
-#         time.sleep(1)
-#     await ctx.message.channel.send("검사종료")
 
 
 client.run(token)
