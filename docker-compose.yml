@@ -1,0 +1,13 @@
+version: "3.4"
+
+services:
+  miku_bot:
+    image: mikubot
+    container_name: mikubot
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - .:/app
+    environment:
+      - LC_ALL=C.UTF-8
