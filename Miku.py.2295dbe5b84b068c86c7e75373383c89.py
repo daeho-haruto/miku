@@ -19,7 +19,7 @@ load_dotenv(dotenv_path)
 
 token = os.environ.get("MIKU_PSW")
 
-#token = "ODAyNDg3MTUyNDYwOTU1NjQ4.YAv8Zg.L5xzZ6aX5OxEVuRc2HL6JRWWEBo"
+#token = ""
 
 client = commands.Bot(command_prefix='!')
 # intents = discord.Intents.default()
