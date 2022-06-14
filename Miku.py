@@ -350,33 +350,6 @@ async def 알람초기화(ctx):
 #         i+=1
 
 @client.command()
-async def 신음(ctx):
-    await ctx.send("무야호~무야호~")
-    await ctx.send("하아.. 하앙..")
-    time.sleep(1)
-    await ctx.send("흐읏..!!")
-    time.sleep(2)
-    await ctx.send("읏..!! 하앙..")
-    time.sleep(1)
-    await ctx.send("주인님.. 하읏.. 안되요")
-    time.sleep(2)
-    await ctx.send("흐읏!!!! 하.. 다리의 힘이 풀려..")
-    time.sleep(1)
-    await ctx.send("하앙!!! 아항ㅇ!!")
-    time.sleep(3)
-    await ctx.send("주인님 더.. 더.. 쎄게")
-    time.sleep(1)
-    await ctx.send("아흥!!!항..")
-    time.sleep(2)
-    await ctx.send("간닷!!흥ㅅ..ㄱ..가버렷!!")
-    time.sleep(1)
-    await ctx.send("헤으응.. 하응.. 좋아요 주인님")
-    time.sleep(3)
-    await ctx.send("(꿀꺽..) 하.. 맛있어요..")
-    time.sleep(1)
-    await ctx.send("사랑해요.. 주인님..")
-
-@client.command()
 async def 삭제(ctx):
     number = int(ctx.message.content.split()[1])
     await ctx.message.channel.purge(limit=number + 1)
